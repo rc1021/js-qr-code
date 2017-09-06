@@ -1,25 +1,64 @@
-<!DOCTYPE html>
 <html>
-  <head>
-    <title>Instascan</title>
-    <script type="text/javascript" src="/js/instascan.min.js"></script>
-  </head>
-  <body>
-    <video id="preview"></video>
-    <script type="text/javascript">
-      let scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
-      scanner.addListener('scan', function (content) {
-        console.log(content);
-      });
-      Instascan.Camera.getCameras().then(function (cameras) {
-        if (cameras.length > 0) {
-          scanner.start(cameras[0]);
-        } else {
-          console.error('No cameras found.');
-        }
-      }).catch(function (e) {
-        console.error(e);
-      });
-    </script>
-  </body>
+<head>
+<title>QRCODE</title>
+
+<style type="text/css">
+</style>
+
+<script type="text/javascript" src="//code.jquery.com/jquery-2.2.4.min.js"></script>
+<script type="text/javascript" src="/js/grid.js"></script>
+<script type="text/javascript" src="/js/version.js"></script>
+<script type="text/javascript" src="/js/detector.js"></script>
+<script type="text/javascript" src="/js/formatinf.js"></script>
+<script type="text/javascript" src="/js/errorlevel.js"></script>
+<script type="text/javascript" src="/js/bitmat.js"></script>
+<script type="text/javascript" src="/js/datablock.js"></script>
+<script type="text/javascript" src="/js/bmparser.js"></script>
+<script type="text/javascript" src="/js/datamask.js"></script>
+<script type="text/javascript" src="/js/rsdecoder.js"></script>
+<script type="text/javascript" src="/js/gf256poly.js"></script>
+<script type="text/javascript" src="/js/gf256.js"></script>
+<script type="text/javascript" src="/js/decoder.js"></script>
+<script type="text/javascript" src="/js/qrcode.js"></script>
+<script type="text/javascript" src="/js/findpat.js"></script>
+<script type="text/javascript" src="/js/alignpat.js"></script>
+<script type="text/javascript" src="/js/databr.js"></script>
+
+<script type="text/javascript">
+  function getBase64(file, closure) {
+     var reader = new FileReader();
+     reader.readAsDataURL(file);
+     reader.onload = function () {
+      console.log(reader.result);
+      if(typeof closure === "function") {
+        closure(reader.result);
+      }
+     };
+     reader.onerror = function (error) {
+       console.log('Error: ', error);
+     };
+  }
+
+  $(function () {
+
+    qrcode.callback = function (data) {
+      console.log(data);
+    };
+
+    $('#qrcode').on('change', function () {
+      if(this.files && this.files.length > 0) {
+        getBase64(this.files[0], function (result) {
+          qrcode.decode(result);
+        });
+      }
+    });
+  })
+</script>
+
+</head>
+
+<body>
+  <input type="file" name="qrcode" id="qrcode">
+</body>
+
 </html>
