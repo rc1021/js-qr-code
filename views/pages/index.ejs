@@ -30,7 +30,7 @@
      reader.onload = function () {
       console.log(reader.result);
       if(typeof closure === "function") {
-        closure(reader.result);
+        closure(reader.result, file.type);
       }
      };
      reader.onerror = function (error) {
@@ -38,10 +38,34 @@
      };
   }
 
+  function gray(imgObj, type) {
+      var canvas = document.createElement('canvas');
+      var canvasContext = canvas.getContext('2d');
+       
+      var imgW = imgObj.width;
+      var imgH = imgObj.height;
+      canvas.width = imgW;
+      canvas.height = imgH;
+       
+      canvasContext.drawImage(imgObj, 0, 0);
+      var imgPixels = canvasContext.getImageData(0, 0, imgW, imgH);
+       
+      for(var y = 0; y < imgPixels.height; y++){
+          for(var x = 0; x < imgPixels.width; x++){
+              var i = (y * 4) * imgPixels.width + x * 4;
+              var avg = (imgPixels.data[i] + imgPixels.data[i + 1] + imgPixels.data[i + 2]) / 3;
+              imgPixels.data[i] = avg; 
+              imgPixels.data[i + 1] = avg; 
+              imgPixels.data[i + 2] = avg;
+          }
+      }
+      canvasContext.putImageData(imgPixels, 0, 0, 0, 0, imgPixels.width, imgPixels.height);
+      return (type) ? canvas.toDataURL(type) : canvas.toDataURL();
+  }
+
   $(function () {
 
     qrcode.callback = function (data) {
-      console.log(data);
       $('#show').val(data);
     };
 
@@ -50,8 +74,13 @@
         if($('#scan').data('disable-with')) {
           $('#show').val($('#scan').data('disable-with'));
         }
-        getBase64(this.files[0], function (result) {
-          qrcode.decode(result);
+        getBase64(this.files[0], function (result, type) {
+          var img = new Image();
+          img.onload = function() {
+            var base64_data_gray = gray(img, type);
+            qrcode.decode(base64_data_gray);
+          }
+          img.src = result;
         });
       }
     });
@@ -59,6 +88,7 @@
     $('#scan').on('click', function () {
       $('#qrcode').trigger('click');
     });
+
   })
 </script>
 
