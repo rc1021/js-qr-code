@@ -43,6 +43,7 @@
 
     qrcode.callback = function (data) {
       console.log(data);
+      $('#show').html(data);
     };
 
     $('#qrcode').on('change', function () {
@@ -59,6 +60,7 @@
 
 <body>
   <input type="file" name="qrcode" id="qrcode">
+  <div id="show"></div>
 </body>
 
 </html>
