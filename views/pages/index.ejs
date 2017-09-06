@@ -79,6 +79,9 @@
           img.onload = function() {
             var base64_data_gray = gray(img, type);
             qrcode.decode(base64_data_gray);
+            var tmp = new Image();
+            tmp.src = base64_data_gray;
+            $('body').append(tmp);
           }
           img.src = result;
         });
