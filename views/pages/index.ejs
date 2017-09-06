@@ -48,14 +48,10 @@
     $('#qrcode').on('change', function () {
       if(this.files && this.files.length > 0) {
         if($('#scan').data('disable-with')) {
-          $('#scan').data('origin-with', $('#scan').html());
-          $('#scan').html($('#scan').data('disable-with'));
+          $('#show').val($('#scan').data('disable-with'));
         }
         getBase64(this.files[0], function (result) {
           qrcode.decode(result);
-          if($('#scan').data('origin-with')) {
-            $('#scan').html($('#scan').data('origin-with'));
-          }
         });
       }
     });
